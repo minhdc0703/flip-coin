@@ -78,6 +78,10 @@ export type Flip = {
           {
             "name": "value",
             "type": "u64"
+          },
+          {
+            "name": "flipped",
+            "type": "bool"
           }
         ]
       }
@@ -165,6 +169,10 @@ export const IDL: Flip = {
           {
             "name": "value",
             "type": "u64"
+          },
+          {
+            "name": "flipped",
+            "type": "bool"
           }
         ]
       }

@@ -1,14 +1,12 @@
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::clock;
 
-declare_id!("7KyfuxbdFSzMpn9DF1atPsPEHTLbVPgGwW7vb54x7C9J");
+declare_id!("9siGmhPYWd9iNuKe9HjcACwzBUDUtbq3u5hWfcCuvwH8");
 
 #[program]
 pub mod flip {
     use super::*;
     pub fn create_flip(ctx: Context<CreateFlip>, amount: u64) -> Result<()> {
-        // **ctx.accounts.player.to_account_info().try_borrow_mut_lamports()? -= amount;
-        // **ctx.accounts.vault_account.to_account_info().try_borrow_mut_lamports()? += amount;
         let transfer_sol_instruction = anchor_lang::system_program::Transfer {
             from: ctx.accounts.creator.to_account_info(),
             to: ctx.accounts.vault_account.to_account_info(),
@@ -21,6 +19,7 @@ pub mod flip {
         let vault_account = &mut ctx.accounts.vault_account;
         vault_account.creator = ctx.accounts.creator.key();
         vault_account.value = amount;
+        vault_account.flipped = false;
         msg!("Successful create a flip");
         Ok(())
     }
@@ -49,6 +48,10 @@ pub mod flip {
             **ctx.accounts.player.try_borrow_mut_lamports()? += amount * 2;
         }
 
+        let vault_account = &mut ctx.accounts.vault_account;
+        vault_account.value = 0;
+        vault_account.flipped = true;
+
         Ok(())
     }
 }
@@ -61,7 +64,7 @@ pub struct CreateFlip<'info> {
         payer = creator,
         seeds = [b"vault_account", creator.key().as_ref()],
         bump,
-        space = 8 + 8 * 2 + 32
+        space = 8 + 8 + 1 + 32
     )]
     pub vault_account: Account<'info, VaultAccount>,
     #[account(mut, constraint = creator.lamports() > amount)]
@@ -89,5 +92,6 @@ pub struct Flip<'info> {
 #[account]
 pub struct VaultAccount {
     pub creator: Pubkey,
-    pub value: u64
+    pub value: u64,
+    pub flipped: bool,
 }

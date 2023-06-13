@@ -54,27 +54,27 @@ import idl from "../target/idl/flip.json";
     value: Number(data.value.toString()) / anchor.web3.LAMPORTS_PER_SOL,
   });
 
-  // const createFlip = await program.methods
-  //   .createFlip(new anchor.BN(anchor.web3.LAMPORTS_PER_SOL))
-  //   .accounts({
-  //     vaultAccount: vaultAccount,
-  //     creator: player1.publicKey,
-  //   })
-  //   .signers([player1])
-  //   .rpc();
+  const createFlip = await program.methods
+    .createFlip(new anchor.BN(anchor.web3.LAMPORTS_PER_SOL))
+    .accounts({
+      vaultAccount: vaultAccount,
+      creator: player1.publicKey,
+    })
+    .signers([player1])
+    .rpc();
 
-  // console.log("create flip transaction: ", createFlip);
+  console.log("create flip transaction: ", createFlip);
 
-  // await new Promise(r => setTimeout(r, 5000));
+  await new Promise(r => setTimeout(r, 5000));
 
-  // const flip = await program.methods
-  //   .flip(new anchor.BN(anchor.web3.LAMPORTS_PER_SOL))
-  //   .accounts({
-  //     creator: player1.publicKey,
-  //     player: player2.publicKey,
-  //     vaultAccount: vaultAccount,
-  //   })
-  //   .signers([player2])
-  //   .rpc();
-  // console.log("flip transaction: ", flip);
+  const flip = await program.methods
+    .flip(new anchor.BN(anchor.web3.LAMPORTS_PER_SOL))
+    .accounts({
+      creator: player1.publicKey,
+      player: player2.publicKey,
+      vaultAccount: vaultAccount,
+    })
+    .signers([player2])
+    .rpc();
+  console.log("flip transaction: ", flip);
 })();

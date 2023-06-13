@@ -78,6 +78,10 @@
           {
             "name": "value",
             "type": "u64"
+          },
+          {
+            "name": "flipped",
+            "type": "bool"
           }
         ]
       }

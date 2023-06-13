@@ -11,15 +11,17 @@ export const createFlip = async (
     program.programId
   )[0];
 
-  let tx = await program.rpc
-    .createFlip(new anchor.BN(value * anchor.web3.LAMPORTS_PER_SOL), {
+  let tx = await program.rpc.createFlip(
+    new anchor.BN(value * anchor.web3.LAMPORTS_PER_SOL),
+    {
       accounts: {
         vaultAccount: vaultAccount,
         creator: creator,
         systemProgram: anchor.web3.SystemProgram.programId,
         rent: anchor.web3.SYSVAR_RENT_PUBKEY,
-      }
-    });
+      },
+    }
+  );
 
   return tx;
 };
@@ -34,15 +36,17 @@ export const flip = async (
     [Buffer.from("vault_account"), creator.toBuffer()],
     program.programId
   )[0];
-  let tx = await program.rpc
-    .flip(new anchor.BN(value * anchor.web3.LAMPORTS_PER_SOL), {
+  let tx = await program.rpc.flip(
+    new anchor.BN(value * anchor.web3.LAMPORTS_PER_SOL),
+    {
       accounts: {
         vaultAccount: vaultAccount,
         creator: creator,
         player: player,
         systemProgram: anchor.web3.SystemProgram.programId,
-      }
-    })
+      },
+    }
+  );
 
   return tx;
 };
@@ -71,10 +75,12 @@ export const getFlipOrder = async (
   );
   const vaultAccountsData = await Promise.all(getAccountsDataPromises);
 
-  return vaultAccountsData.map((item) => {
-    return {
-      creator: item.creator.toString(),
-      value: Number(item.value.toString()) / anchor.web3.LAMPORTS_PER_SOL,
-    };
-  });
+  return vaultAccountsData
+    .filter((item: any) => item.flipped == false)
+    .map((item) => {
+      return {
+        creator: item.creator.toString(),
+        value: Number(item.value.toString()) / anchor.web3.LAMPORTS_PER_SOL,
+      };
+    });
 };
