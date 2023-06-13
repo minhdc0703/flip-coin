@@ -4,7 +4,7 @@ import * as anchor from "@project-serum/anchor";
 
 import idl from "artifacts/flip.json";
 import config from "artifacts/config.json";
-import { DappStarter } from "artifacts/flip";
+import { Flip } from "artifacts/flip";
 
 const programID = new PublicKey(config.programId);
 
@@ -24,23 +24,18 @@ type ProgramProps = {
 };
 
 export const useProgram = ({ connection, wallet }: ProgramProps) => {
-  const [program, setProgram] = useState<anchor.Program<DappStarter>>();
+  const [program, setProgram] = useState<anchor.Program<Flip>>();
 
   useEffect(() => {
     updateProgram();
   }, [connection, wallet]);
 
   const updateProgram = () => {
-    const provider = new anchor.Provider(connection, wallet, {
+    const provider = new anchor.AnchorProvider(connection, wallet, {
       preflightCommitment: "recent",
       commitment: "processed",
     });
-    console.log("provider", provider);
-
-    //   const idl = await anchor.Program.fetchIdl(programID, provider);
-    //   console.log("idl", idl);
-
-    const program = new anchor.Program(idl as DappStarter, programID, provider);
+    const program = new anchor.Program(idl as Flip, programID, provider);
 
     setProgram(program);
   };
@@ -51,5 +46,5 @@ export const useProgram = ({ connection, wallet }: ProgramProps) => {
 };
 
 export const useFlipCoinProgram = ({ connection, wallet }: ProgramProps) => {
-  const [program, setProgram] = useState<anchor.Program<DappStarter>>();
+  const [program, setProgram] = useState<anchor.Program<Flip>>();
 }
