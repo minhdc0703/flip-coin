@@ -1,26 +1,30 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import {
-  useAnchorWallet,
-  useConnection,
-  useLocalStorage,
-} from "@solana/wallet-adapter-react";
+import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import * as anchor from "@project-serum/anchor";
 import { createFlip, getFlipOrder, flip } from "./methods";
 import { useProgram } from "./useProgram";
-import { Box, Button, Stack, TextField, Typography } from "@mui/material";
+import {
+  Alert,
+  Box,
+  Button,
+  Snackbar,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 const FlipCoinScreen: FC = () => {
   const { connection } = useConnection();
   const wallet: any = useAnchorWallet();
-  const [prices, setPrices] = useState<string[]>([]);
   const [input, setInput] = useState("1");
   const { program } = useProgram({ connection, wallet });
   const [orders, setOrders] = useState<{ creator: string; value: number }[]>(
     []
   );
   const [txFlip, setTxFlip] = useState<string>("");
+  const [message, setMessage] = useState<string>("");
 
-  // const [isLoading, setLoading] = useState<boolean>(false);
+  const [isOpenNotification, setOpenNotification] = useState<boolean>(false);
 
   // const [configPubkey, setConfigPubkey] =
   //   useLocalStorage<anchor.web3.PublicKey | null>("configPubkey", null);
@@ -46,8 +50,12 @@ const FlipCoinScreen: FC = () => {
     if (!wallet.publicKey) {
       return "config pubkey undefined";
     }
-    await createFlip(program, wallet.publicKey, Number(value));
-    await getFlipOrder(program);
+    const tx = await createFlip(program, wallet.publicKey, Number(value));
+    if (tx) {
+      await fetchFlipOrder();
+    }
+    setMessage("The transaction successfully created.");
+    setOpenNotification(true);
   };
 
   const flipCoin = async (value: number, creator: string) => {
@@ -65,37 +73,26 @@ const FlipCoinScreen: FC = () => {
       value
     );
     setTxFlip(tx);
+
+    // define message win or lose
+    setOpenNotification(true);
   };
 
-  const addValueFlip = useCallback(() => {
-    if (input && Number(input) > 0 && !prices.includes(input)) {
-      setPrices([...prices, input]);
-      setInput("");
+  const addValueFlip = useCallback(async () => {
+    if (input && Number(input) > 0) {
+      await createFlipCoin(input);
     }
-  }, [prices, input]);
+  }, [input]);
+
+  const handleClose = () => {
+    setOpenNotification(false);
+  };
 
   return (
     <div
       className="container mx-auto max-w-6xl p-8 2xl:px-0"
       style={{ backgroundColor: "white" }}
     >
-      <div className="mr-4" style={{ color: "gray", marginLeft: 10 }}>
-        The coin you want to flip
-      </div>
-      <Stack direction={"row"} spacing={3} sx={{ mx: 2, my: 2 }}>
-        {prices.map((price, index) => {
-          return (
-            <Button
-              variant="outlined"
-              key={index}
-              sx={{ width: 100, height: 50 }}
-              onClick={() => createFlipCoin(price)}
-            >
-              {price}
-            </Button>
-          );
-        })}
-      </Stack>
       <Stack direction={"column"} sx={{ p: 2 }}>
         <TextField
           error={(input && Number(input) < 0) || false}
@@ -121,6 +118,7 @@ const FlipCoinScreen: FC = () => {
       <Stack direction={"column"} sx={{ p: 2 }}>
         <Button
           sx={{ color: "gray", border: "none", justifyContent: "flex-start" }}
+          onClick={async () => await fetchFlipOrder()}
         >
           {"Flip orders"}
         </Button>
@@ -148,6 +146,21 @@ const FlipCoinScreen: FC = () => {
           <Typography sx={{ color: "gray", py: 2 }}>{txFlip}</Typography>
         </Stack>
       </Stack>
+
+      <Snackbar
+        open={isOpenNotification}
+        autoHideDuration={3000}
+        onClose={handleClose}
+      >
+        <Alert
+          elevation={6}
+          variant="filled"
+          onClose={handleClose}
+          severity="success"
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };
