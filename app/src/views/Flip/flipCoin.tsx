@@ -26,8 +26,6 @@ const FlipCoinScreen: FC = () => {
 
   const [isOpenNotification, setOpenNotification] = useState<boolean>(false);
 
-  // const [configPubkey, setConfigPubkey] =
-  //   useLocalStorage<anchor.web3.PublicKey | null>("configPubkey", null);
   useEffect(() => {
     fetchFlipOrder();
   }, [wallet]);

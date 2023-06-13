@@ -34,10 +34,6 @@ const Header = () => {
     setAnchorEl(null)
   }, [])
 
-  // const handleToggleTheme = useCallback(() => {
-  //   toggleThemeMode()
-  //   handleClose()
-  // }, [toggleThemeMode, handleClose])
 
  
   return (

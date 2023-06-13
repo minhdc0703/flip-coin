@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FC } from "react";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
 
 import styles from "./index.module.css";
 import { FlipView } from "views";
@@ -17,9 +17,7 @@ export const HomeView: FC = ({}) => {
           <div className="hero min-h-16 py-4">
             <div className="text-center hero-content">
               <div className="max-w-lg">
-                <h1 className="mb-5 text-5xl font-bold">
-                  Renec Dapp Example: Flip Coin
-                </h1>
+                <h1 className="mb-5 text-5xl font-bold">Flip Coin</h1>
                 <p>
                   {publicKey ? <>Your address: {publicKey.toBase58()}</> : null}
                 </p>
