@@ -1,6 +1,15 @@
 import { FC, useState } from "react";
 import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import styles from "./index.module.css";
+import {
+  Alert,
+  Box,
+  Button,
+  Snackbar,
+  Stack,
+  TextField,
+  Typography,
+} from "@mui/material";
 
 import FlipCoinScreen from "./flipCoin";
 
@@ -8,6 +17,7 @@ export const FlipView: FC = ({}) => {
   const { connection } = useConnection();
   const [isAirDropped, setIsAirDropped] = useState(false);
   const wallet = useAnchorWallet();
+  const [message, setMessage] = useState<string>("");
 
   const airdropToWallet = async () => {
     if (wallet) {
@@ -21,14 +31,18 @@ export const FlipView: FC = ({}) => {
       const tx = await connection.confirmTransaction(signature);
       console.log(tx);
       setIsAirDropped(true);
+      setMessage("Airdrop Successful");
     }
+  };
+
+  const handleClose = () => {
+    setIsAirDropped(false);
   };
 
   return (
     <div className="container mx-auto max-w-6xl p-8 2xl:px-0">
       <div className={styles.container}>
         <div className="flex mb-16">
-          <div className="mr-4">Need some RENEC on test wallet?</div>
           <div className="mr-4">
             <button
               className="btn btn-primary normal-case btn-xs"
@@ -37,7 +51,6 @@ export const FlipView: FC = ({}) => {
               Airdrop 1 RENEC
             </button>
           </div>
-          {isAirDropped ? <div className="opacity-50">Sent!</div> : null}
         </div>
         <h1 className="mb-5 pb-8 text-5xl">Flip Coin</h1>
 
@@ -49,6 +62,20 @@ export const FlipView: FC = ({}) => {
           )}
         </div>
       </div>
+      <Snackbar
+        open={isAirDropped}
+        autoHideDuration={5000}
+        onClose={handleClose}
+      >
+        <Alert
+          elevation={6}
+          variant="filled"
+          onClose={handleClose}
+          severity="success"
+        >
+          {message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

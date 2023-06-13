@@ -17,15 +17,9 @@ export const HomeView: FC = ({}) => {
           <div className="hero min-h-16 py-4">
             <div className="text-center hero-content">
               <div className="max-w-lg">
-                <h1 className="mb-5 text-5xl font-bold">Hello Renec World!</h1>
-                <p className="mb-5">
-                  This scaffold includes awesome tools for rapid development and
-                  deploy dapps to Renec: Next.JS, TypeScript, TailwindCSS, Daisy
-                  UI.
-                </p>
-                <p className="mb-5">
-                  Daemon wallet adapter is connected and ready to use.
-                </p>
+                <h1 className="mb-5 text-5xl font-bold">
+                  Renec Dapp Example: Flip Coin
+                </h1>
                 <p>
                   {publicKey ? <>Your address: {publicKey.toBase58()}</> : null}
                 </p>
