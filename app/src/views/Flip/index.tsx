@@ -3,12 +3,12 @@ import { useAnchorWallet, useConnection } from "@solana/wallet-adapter-react";
 import * as anchor from "@project-serum/anchor";
 
 import styles from "./index.module.css";
-import { initialize, getCounter, increment } from "./methods";
+import { createFlip, getFlipOrder, flip } from "./methods";
 import { useProgram } from "./useProgram";
 import useLocalStorage from "hooks/useLocalStorage";
 import FlipCoinScreen from "./flipCoin";
 
-export const DappStarterView: FC = ({}) => {
+export const FlipView: FC = ({}) => {
   const { connection } = useConnection();
   const [isAirDropped, setIsAirDropped] = useState(false);
   const wallet = useAnchorWallet();
@@ -43,17 +43,6 @@ export const DappStarterView: FC = ({}) => {
           </div>
           {isAirDropped ? <div className="opacity-50">Sent!</div> : null}
         </div>
-
-        <h1 className="mb-5 pb-8 text-5xl">Counter</h1>
-
-        <div>
-          {!wallet ? (
-            <h1> Please connect wallet to view the counter screen</h1>
-          ) : (
-            <DappStarterScreen />
-          )}
-        </div>
-
         <h1 className="mb-5 pb-8 text-5xl">Flip Coin</h1>
 
         <div>
@@ -78,35 +67,24 @@ const DappStarterScreen = () => {
   const [lastUpdatedTime, setLastUpdatedTime] = useState<number>();
 
   useEffect(() => {
-    fetchCounter();
+    fetchFlipOrder();
   }, [wallet, lastUpdatedTime]);
 
-  const fetchCounter = async () => {
+  const fetchFlipOrder = async () => {
     if (!program) {
       return "program undefined";
     }
     if (!configPubkey) {
       return "config pubkey undefined";
     }
-    let counter = await getCounter(program, configPubkey);
+    let order = await getFlipOrder(program);
     setCounter(counter);
   };
 
-  const handleIncrement = async () => {
-    try {
-      let tx = await increment(program!, configPubkey!);
-      console.log("tx: ", tx);
 
-      // Update the counter after increment
-      await fetchCounter();
-    } catch (error) {
-      console.error("Error fail to increment counter:", error);
-    }
-  };
-
-  const handleClickInitialize = async () => {
+  const handleClickCreateFlip = async () => {
     try {
-      let configAddr = await initialize(program!);
+      let configAddr = await createFlip(program!);
       setConfigPubkey(configAddr);
       setCounter(new anchor.BN(0));
     } catch (error) {

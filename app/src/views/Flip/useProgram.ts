@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import { Connection, PublicKey } from "@solana/web3.js";
 import * as anchor from "@project-serum/anchor";
 
-import idl from "artifacts/dapp_starter.json";
+import idl from "artifacts/flip.json";
 import config from "artifacts/config.json";
-import { DappStarter } from "artifacts/dapp_starter";
+import { DappStarter } from "artifacts/flip";
 
 const programID = new PublicKey(config.programId);
 
