@@ -77,7 +77,7 @@ const FlipCoinScreen: FC = () => {
     );
     console.log("flip tx: ", tx);
     const data = await program.provider.connection.getParsedTransaction(tx);
-    const isWin = data?.meta?.logMessages?.includes("player win");
+    const isWin = data?.meta?.logMessages?.includes("Program log: player win !");
     setTxFlip(tx);
     console.log("iswin: ", isWin);
     // define message win or lose
