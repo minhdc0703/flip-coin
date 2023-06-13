@@ -1,3 +1,3 @@
 export { HomeView } from "./HomeView";
 
-export { DappStarterView } from "./Flip";
+export { FlipView } from "./Flip";

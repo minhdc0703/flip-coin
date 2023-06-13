@@ -44,7 +44,3 @@ export const useProgram = ({ connection, wallet }: ProgramProps) => {
     program,
   };
 };
-
-export const useFlipCoinProgram = ({ connection, wallet }: ProgramProps) => {
-  const [program, setProgram] = useState<anchor.Program<Flip>>();
-}

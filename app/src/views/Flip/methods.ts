@@ -5,19 +5,21 @@ export const createFlip = async (
   program: anchor.Program<Flip>,
   creator: anchor.web3.PublicKey,
   value: number
-): Promise<anchor.web3.Transaction> => {
+): Promise<string> => {
   const vaultAccount = anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from("vault_account"), creator.toBuffer()],
     program.programId
   )[0];
 
-  let tx = await program.methods
-    .createFlip(new anchor.BN(value * anchor.web3.LAMPORTS_PER_SOL))
-    .accounts({
-      vaultAccount: vaultAccount,
-      creator: creator,
-    })
-    .transaction();
+  let tx = await program.rpc
+    .createFlip(new anchor.BN(value * anchor.web3.LAMPORTS_PER_SOL), {
+      accounts: {
+        vaultAccount: vaultAccount,
+        creator: creator,
+        systemProgram: anchor.web3.SystemProgram.programId,
+        rent: anchor.web3.SYSVAR_RENT_PUBKEY,
+      }
+    });
 
   return tx;
 };
@@ -27,19 +29,20 @@ export const flip = async (
   creator: anchor.web3.PublicKey,
   player: anchor.web3.PublicKey,
   value: number
-): Promise<anchor.web3.Transaction> => {
+): Promise<string> => {
   const vaultAccount = anchor.web3.PublicKey.findProgramAddressSync(
     [Buffer.from("vault_account"), creator.toBuffer()],
     program.programId
   )[0];
-  let tx = await program.methods
-    .flip(new anchor.BN(value * anchor.web3.LAMPORTS_PER_SOL))
-    .accounts({
-      creator: creator,
-      player: player,
-      vaultAccount: vaultAccount,
+  let tx = await program.rpc
+    .flip(new anchor.BN(value * anchor.web3.LAMPORTS_PER_SOL), {
+      accounts: {
+        vaultAccount: vaultAccount,
+        creator: creator,
+        player: player,
+        systemProgram: anchor.web3.SystemProgram.programId,
+      }
     })
-    .transaction();
 
   return tx;
 };
