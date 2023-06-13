@@ -47,6 +47,7 @@ export const flip = async (
       },
     }
   );
+  console.log("transaction: ", tx)
 
   return tx;
 };
@@ -64,19 +65,21 @@ export const getFlipOrder = async (
     {
       filters: [
         {
-          dataSize: 56, // number of bytes
+          dataSize: 49, // number of bytes
         },
       ],
     }
   );
+  console.log(accounts);
 
   const getAccountsDataPromises = accounts.map((item: any) =>
     program.account.vaultAccount.fetch(item.pubkey)
   );
   const vaultAccountsData = await Promise.all(getAccountsDataPromises);
+  console.log(vaultAccountsData);
 
   return vaultAccountsData
-    .filter((item: any) => item.flipped == false)
+    .filter((item: any) => !item.flipped)
     .map((item) => {
       return {
         creator: item.creator.toString(),

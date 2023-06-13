@@ -40,6 +40,7 @@ const FlipCoinScreen: FC = () => {
       return "config pubkey undefined";
     }
     let orders = await getFlipOrder(program);
+    console.log("order: ", orders);
     setOrders(orders);
   };
 
@@ -51,10 +52,11 @@ const FlipCoinScreen: FC = () => {
       return "config pubkey undefined";
     }
     const tx = await createFlip(program, wallet.publicKey, Number(value));
+    console.log(tx);
     if (tx) {
       await fetchFlipOrder();
     }
-    setMessage("The transaction successfully created.");
+    setMessage("The order flip successfully created.");
     setOpenNotification(true);
   };
 
@@ -62,6 +64,7 @@ const FlipCoinScreen: FC = () => {
     if (!program) {
       return "program undefined";
     }
+    console.log("wallet: ", wallet.publicKey.toString())
     if (!wallet.publicKey) {
       return "config pubkey undefined";
     }
@@ -72,10 +75,14 @@ const FlipCoinScreen: FC = () => {
       wallet.publicKey,
       value
     );
+    console.log("flip tx: ", tx);
+    const data = await program.provider.connection.getParsedTransaction(tx);
+    const isWin = data?.meta?.logMessages?.includes("player win");
     setTxFlip(tx);
-
+    console.log("iswin: ", isWin);
     // define message win or lose
     setOpenNotification(true);
+    setMessage(isWin ? "You Win !" : "You lose !");
   };
 
   const addValueFlip = useCallback(async () => {
@@ -149,7 +156,7 @@ const FlipCoinScreen: FC = () => {
 
       <Snackbar
         open={isOpenNotification}
-        autoHideDuration={3000}
+        autoHideDuration={5000}
         onClose={handleClose}
       >
         <Alert
